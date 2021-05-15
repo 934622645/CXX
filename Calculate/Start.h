@@ -11,6 +11,8 @@ public:
     static int add(int a, int b);
 
     static void bubble_sort(int set[], int n);
+
+    int sum(int set[], int n);
 };
 
 

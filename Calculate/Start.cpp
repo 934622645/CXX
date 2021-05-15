@@ -21,3 +21,7 @@ void Start::bubble_sort(int *set, int n) {
         }
     }
 }
+
+int Start::sum(int *set, int n) {
+    return n < 1 ? 0 : set[n - 1] + sum(set, n - 1);
+}
