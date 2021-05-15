@@ -10,7 +10,7 @@ class Start {
 public:
     static int add(int a, int b);
 
-    void bubble_sort(int set[], int n);
+    static void bubble_sort(int set[], int n);
 };
 
 
