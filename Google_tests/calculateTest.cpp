@@ -28,10 +28,13 @@ TEST_F(CalculateTest, sum) {
     Start object{};
     EXPECT_EQ(21, object.sum_re(a, 6));
     EXPECT_EQ(21, object.sum_it(a, 6));
+    EXPECT_EQ(21, object.sum_re_di(a, 0, 5));
     EXPECT_EQ(0, object.sum_re(b, 1));
     EXPECT_EQ(0, object.sum_it(b, 1));
+    EXPECT_EQ(0, object.sum_re_di(b, 0, 0));
     EXPECT_EQ(0, object.sum_re(c, 6));
     EXPECT_EQ(0, object.sum_it(c, 6));
+    EXPECT_EQ(0, object.sum_re_di(c, 0, 5));
 
 }
 
@@ -54,7 +57,6 @@ TEST_F(CalculateTest, bubble_sort) {
     end_time = time(nullptr);
     for (int i = 1; i < length; ++i) {
         EXPECT_TRUE(a[i - 1] <= a[i]);
-
     }
     std::cout << "bubble_sort " << length
               << " speed time "
@@ -66,4 +68,14 @@ TEST_F(CalculateTest, power2) {
     EXPECT_EQ(1073741824, Start::power2_it(30));
     EXPECT_EQ(8, Start::power2_it(3));
     EXPECT_EQ(16, Start::power2_it(4));
+}
+
+TEST_F(CalculateTest, fibonacci) {
+    Start::fib_re(38);
+    time_t start_time = time(nullptr);
+    int64_t p = 0;
+    EXPECT_EQ( Start::fib_re_li(1000,p),Start::fib_it(1000));
+    time_t end_time = time(nullptr);
+    printf("Fibonacci time speed %lld\n", end_time - start_time);
+    EXPECT_EQ(8, Start::fib_re(6));
 }
