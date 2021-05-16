@@ -79,7 +79,6 @@ int64_t Start::power2_it(int n) {
     return result;
 }
 
-
 int64_t Start::fib_re(int n) {
     return n < 2 ? n : fib_re(n - 1) + fib_re(n - 2);
 }
