@@ -81,8 +81,8 @@ public:
 //    Rank insert ( T const& e ) { return insert ( _size, e ); } //默认作为末元素插入
 //    void sort ( Rank lo, Rank hi ); //对[lo, hi)排序
 //    void sort() { sort ( 0, _size ); } //整体排序
-//    void unsort ( Rank lo, Rank hi ); //对[lo, hi)置乱
-//    void unsort() { unsort ( 0, _size ); } //整体置乱
+    void unsort(Rank lo, Rank hi); //对[lo, hi)置乱
+    void unsort() { unsort(0, _size); } //整体置乱
 //    int deduplicate(); //无序去重
 //    int uniquify(); //有序去重
 //    // 遍历
@@ -148,14 +148,30 @@ void Vector<T>::print() {
     std::cout << '\n';
 }
 
+template<typename T>
+void Vector<T>::unsort(Rank lo, Rank hi) {
+    srand((unsigned int) time(nullptr)); // NOLINT(cert-msc51-cpp)
+    T *V = _elem + lo;
+    for (Rank i = hi - lo; i > 0; i--) swap(V[i - 1], V[rand() % i]); // NOLINT(cert-msc50-cpp)
+}
+
 
 
 //Vector
 
+// tool function
+
 template<typename T>
-void permute(Vector<T> &V) {
-    for (int i = V.size(); i > 0; i--) swap(V[i - 1], V[rand() % i]); // NOLINT(cert-msc50-cpp)
-}
+static bool lt(T *a, T *b) { return lt(*a, *b); }
+
+template<typename T>
+static bool lt(T &a, T &b) { return a < b; }
+
+template<typename T>
+static bool eq(T *a, T *b) { return eq(*a, *b); }
+
+template<typename T>
+static bool eq(T &a, T &b) { return a == b; }
 
 #endif //START_VECTOR_H
 

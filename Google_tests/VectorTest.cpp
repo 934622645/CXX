@@ -23,13 +23,14 @@ TEST_F(VectorTest, constructor) {
     Vector<int> a4(a1, 4, 10); // 拷贝构造-4 NOLINT(performance-unnecessary-copy-initialization)
     a4 = a3;
 #pragma clang diagnostic pop
-    printf("constructor is ok");
+    printf("constructor test pass\n");
 }
 
 TEST_F(VectorTest, inside){
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Vector<int> a(l, 10);
-    permute(a);
+    a.unsort();
     a.print();
-    printf("ram test pass\n");
+    printf("inside test pass\n");
 }
+
