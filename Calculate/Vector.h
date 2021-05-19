@@ -7,8 +7,11 @@
 #ifndef START_VECTOR_H
 #define START_VECTOR_H
 
+using namespace std;
 using Rank = int; //秩
 #define DEFAULT_CAPACITY  3 //默认的初始容量（实际应用中可设置为更大）
+
+#include <vector>
 
 template<typename T>
 class Vector { //向量模板类
@@ -56,16 +59,18 @@ public:
     ~Vector() { delete[] _elem; } //释放内部空间
     void test();
 
-//    // 只读访问接口
-//    Rank size() const { return _size; } //规模
-//    bool empty() const { return !_size; } //判空
+    void print();
+
+    // 只读访问接口
+    Rank size() const { return _size; } //规模
+    bool empty() const { return !_size; } //判空
 //    Rank find ( T const& e ) const { return find ( e, 0, _size ); } //无序向量整体查找
 //    Rank find ( T const& e, Rank lo, Rank hi ) const; //无序向量区间查找
 //    Rank search ( T const& e ) const //有序向量整体查找
 //    { return ( 0 >= _size ) ? -1 : search ( e, 0, _size ); }
 //    Rank search ( T const& e, Rank lo, Rank hi ) const; //有序向量区间查找
 //    // 可写访问接口
-//    T& operator[] ( Rank r ); //重载下标操作符，可以类似于数组形式引用各元素
+    T &operator[](Rank r); //重载下标操作符，可以类似于数组形式引用各元素
 //    const T& operator[] ( Rank r ) const; //仅限于做右值的重载版本
 
     // O(n)-O(n)
@@ -132,10 +137,25 @@ void Vector<T>::test() {
     this->shrink();
 }
 
+template<typename T>
+T &Vector<T>::operator[](Rank r) {
+    return _elem[r];
+}
+
+template<typename T>
+void Vector<T>::print() {
+    for (int i = 0; i < _size; ++i) std::cout << _elem[i] << '\t';
+    std::cout << '\n';
+}
+
 
 
 //Vector
 
+template<typename T>
+void permute(Vector<T> &V) {
+    for (int i = V.size(); i > 0; i--) swap(V[i - 1], V[rand() % i]); // NOLINT(cert-msc50-cpp)
+}
 
 #endif //START_VECTOR_H
 

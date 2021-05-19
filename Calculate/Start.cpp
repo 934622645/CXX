@@ -5,12 +5,11 @@
 #include "Start.h"
 #include <vector>
 #include <stack>
-
+#include <queue>
 using namespace std;
 
 void test() {
-    stack<int> a;
-
+    vector<int> a;
 }
 
 int Start::add(int a, int b) {
