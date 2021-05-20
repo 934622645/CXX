@@ -26,11 +26,21 @@ TEST_F(VectorTest, constructor) {
     printf("constructor test pass\n");
 }
 
-TEST_F(VectorTest, inside){
+TEST_F(VectorTest, inside) {
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Vector<int> a(l, 10);
     a.unsort();
     a.print();
     printf("inside test pass\n");
+}
+
+TEST_F(VectorTest, CRUD) {
+    int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Vector<int> a(l, 10);
+    ASSERT_EQ(8, a.insert(8, 11));
+    ASSERT_EQ(8, a.find(11));
+    ASSERT_EQ(11, a.remove(8));
+    ASSERT_EQ(-1, a.find(11));
+
 }
 

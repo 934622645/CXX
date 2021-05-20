@@ -12,6 +12,7 @@ using Rank = int; //秩
 #define DEFAULT_CAPACITY  3 //默认的初始容量（实际应用中可设置为更大）
 
 #include <vector>
+#include <iostream>
 
 template<typename T>
 class Vector { //向量模板类
@@ -21,9 +22,9 @@ protected:
     T *_elem; //规模、容量、数据区
     // O(n)-O(n)
     void copyFrom(T const *A, Rank lo, Rank hi); //复制数组区间A[lo, hi)
-    // O(1)-O(1) - share
+    // O(1)-O(1) - share create space
     void expand(); //空间不足时扩容
-    // O(1)-O(1) - share
+    // O(1)-O(1) - share delete space
     void shrink(); //装填因子过小时压缩
 //    bool bubble ( Rank lo, Rank hi ); //扫描交换
 //    void bubbleSort ( Rank lo, Rank hi ); //起泡排序算法
@@ -64,8 +65,12 @@ public:
     // 只读访问接口
     Rank size() const { return _size; } //规模
     bool empty() const { return !_size; } //判空
-//    Rank find ( T const& e ) const { return find ( e, 0, _size ); } //无序向量整体查找
-//    Rank find ( T const& e, Rank lo, Rank hi ) const; //无序向量区间查找
+    // O(n)-O(1)
+    // return : -1--error
+    Rank find(T const &e) const { return find(e, 0, _size); } //无序向量整体查找
+    // O(n)-O(1)
+    // return : -1--error
+    Rank find(T const &e, Rank lo, Rank hi) const; //无序向量区间查找
 //    Rank search ( T const& e ) const //有序向量整体查找
 //    { return ( 0 >= _size ) ? -1 : search ( e, 0, _size ); }
 //    Rank search ( T const& e, Rank lo, Rank hi ) const; //有序向量区间查找
@@ -75,10 +80,16 @@ public:
 
     // O(n)-O(n)
     Vector<T> &operator=(Vector<T> const &); //重载赋值操作符，以便直接克隆向量
-//    T remove ( Rank r ); //删除秩为r的元素
-//    int remove ( Rank lo, Rank hi ); //删除秩在区间[lo, hi)之内的元素
-//    Rank insert ( Rank r, T const& e ); //插入元素
-//    Rank insert ( T const& e ) { return insert ( _size, e ); } //默认作为末元素插入
+    // O(n)-O(1)
+    T remove(Rank r); //删除秩为r的元素
+    // O(n)-O(1)
+    // note: 0<=lo<hi<=_size
+    int remove(Rank lo, Rank hi); //删除秩在区间[lo, hi)之内的元素
+
+    // O(n)-O(1)
+    Rank insert(Rank r, T const &e); //插入元素
+    // O(n)-O(1)
+    Rank insert(T const &e) { return insert(_size, e); } //默认作为末元素插入
 //    void sort ( Rank lo, Rank hi ); //对[lo, hi)排序
 //    void sort() { sort ( 0, _size ); } //整体排序
     void unsort(Rank lo, Rank hi); //对[lo, hi)置乱
@@ -153,6 +164,37 @@ void Vector<T>::unsort(Rank lo, Rank hi) {
     srand((unsigned int) time(nullptr)); // NOLINT(cert-msc51-cpp)
     T *V = _elem + lo;
     for (Rank i = hi - lo; i > 0; i--) swap(V[i - 1], V[rand() % i]); // NOLINT(cert-msc50-cpp)
+}
+
+template<typename T>
+Rank Vector<T>::find(const T &e, Rank lo, Rank hi) const {
+    while ((lo < hi--) && (_elem[hi] != e));
+    return hi;
+}
+
+template<typename T>
+Rank Vector<T>::insert(Rank r, const T &e) {
+    expand();
+    for (int i = _size; i > r; i--) _elem[i] = _elem[i - 1];
+    _elem[r] = e;
+    _size++;
+    return r;
+}
+
+template<typename T>
+T Vector<T>::remove(Rank r) {
+    T re = _elem[r];
+    remove(r, r + 1);
+    return re;
+}
+
+template<typename T>
+int Vector<T>::remove(Rank lo, Rank hi) {
+    if (lo >= hi) return 0;
+    for (; hi < _size; _elem[lo++] = _elem[hi++]);
+    _size = lo;
+    shrink();
+    return hi - lo;
 }
 
 
