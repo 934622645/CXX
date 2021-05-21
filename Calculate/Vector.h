@@ -92,13 +92,19 @@ public:
     Rank insert(T const &e) { return insert(_size, e); } //默认作为末元素插入
 //    void sort ( Rank lo, Rank hi ); //对[lo, hi)排序
 //    void sort() { sort ( 0, _size ); } //整体排序
+    // O(n)-O(1)
     void unsort(Rank lo, Rank hi); //对[lo, hi)置乱
+    // O(n)-O(1)
     void unsort() { unsort(0, _size); } //整体置乱
-//    int deduplicate(); //无序去重
+    // O(n*n)-O(1)
+    int deduplicate(); //无序去重
 //    int uniquify(); //有序去重
-//    // 遍历
-//    void traverse ( void (* ) ( T& ) ); //遍历（使用函数指针，只读或局部性修改）
-//    template <typename VST> void traverse ( VST& ); //遍历（使用函数对象，可全局性修改）
+    // 遍历
+
+    // O(n)-O(1)
+    void traverse ( void (* ) ( T& ) ); //遍历（使用函数指针，只读或局部性修改）
+    // O(n)-O(1)
+    template <typename VST> void traverse ( VST& ); //遍历（使用函数对象，可全局性修改）
 };
 
 template<typename T>
@@ -195,6 +201,27 @@ int Vector<T>::remove(Rank lo, Rank hi) {
     _size = lo;
     shrink();
     return hi - lo;
+}
+
+template<typename T>
+int Vector<T>::deduplicate() {
+    int oldSize = _size;
+    int i = 1;
+    while (i < _size) {
+        (find(_elem[i], 0, i) < 0) ? i++ : remove(i);
+    }
+    return oldSize - _size;
+}
+
+template<typename T>
+void Vector<T>::traverse(void (*visitor)(T &)) {
+    for (int i = 0; i < _size; ++i) visitor(_elem[i]);
+}
+
+template<typename T>
+template<typename VST>
+void Vector<T>::traverse(VST &visitor) {
+    for (int i = 0; i < _size; ++i) visitor(_elem[i]);
 }
 
 

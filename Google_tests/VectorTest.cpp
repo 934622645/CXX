@@ -34,6 +34,10 @@ TEST_F(VectorTest, inside) {
     printf("inside test pass\n");
 }
 
+void print(int& e){
+    std::cout << e << '\t';
+}
+
 TEST_F(VectorTest, CRUD) {
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Vector<int> a(l, 10);
@@ -41,6 +45,10 @@ TEST_F(VectorTest, CRUD) {
     ASSERT_EQ(8, a.find(11));
     ASSERT_EQ(11, a.remove(8));
     ASSERT_EQ(-1, a.find(11));
+    ASSERT_EQ(5, a.insert(5, 3));
+    ASSERT_EQ(5, a.find(3));
+    ASSERT_EQ(1, a.deduplicate());
+    a.traverse(print);
 
 }
 
