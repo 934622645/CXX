@@ -38,7 +38,6 @@ void print(int& e){
     std::cout << e << '\t';
 }
 
-
 TEST_F(VectorTest, CRUD) {
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Vector<int> a(l, 10);
