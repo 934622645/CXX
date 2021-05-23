@@ -105,8 +105,8 @@ public:
     void unsort() { unsort(0, _size); } //整体置乱
     // O(n*n)-O(1)
     int deduplicate(); //无序去重
-    // O(n)-O(1)
-    int uniquify();    //有序去重
+    // O(n*n)-O(1)
+    int uniquify(); //有序去重
     // 遍历
 
     // O(n)-O(1)
@@ -254,14 +254,23 @@ int Vector<T>::deduplicate()
 template <typename T>
 int Vector<T>::uniquify()
 {
-    int oldSize = _size;
-    int i = 1;
-    while (i < _size)
+    int i = 1, j = 0;
+    for (; i < _size; i++)
     {
-        (_elem[i-1]!= _elem[i]) ? i++ : remove(i);
+        if (_elem[i] != _elem[j])
+            _elem[++j] = _elem[i];
     }
-    return oldSize - _size;
+    _size = ++j;
+    shrink();
+    return i - j;
 }
+// int oldSize = _size;
+// int i = 1;
+// while (i < _size)
+// {
+//     (_elem[i-1]!= _elem[i]) ? i++ : remove(i);
+// }
+// return oldSize - _size;
 
 template <typename T>
 void Vector<T>::traverse(void (*visitor)(T &))
