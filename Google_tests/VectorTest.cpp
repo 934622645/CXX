@@ -9,12 +9,10 @@
 #include <gtest/gtest.h>
 #include <Vector.h>
 
-class VectorTest : public testing::Test
-{
+class VectorTest : public testing::Test {
 };
 
-TEST_F(VectorTest, constructor)
-{
+TEST_F(VectorTest, constructor) {
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedValue"
@@ -28,8 +26,7 @@ TEST_F(VectorTest, constructor)
     printf("constructor test pass\n");
 }
 
-TEST_F(VectorTest, inside)
-{
+TEST_F(VectorTest, inside) {
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Vector<int> a(l, 10);
     a.unsort();
@@ -37,13 +34,11 @@ TEST_F(VectorTest, inside)
     printf("inside test pass\n");
 }
 
-void print(int &e)
-{
+void print(int &e) {
     std::cout << e << '\t';
 }
 
-TEST_F(VectorTest, CRUD)
-{
+TEST_F(VectorTest, CRUD) {
     int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Vector<int> a(l, 10);
     ASSERT_EQ(8, a.insert(8, 11));
@@ -55,6 +50,13 @@ TEST_F(VectorTest, CRUD)
     ASSERT_EQ(5, a.find(3));
     ASSERT_EQ(1, a.deduplicate());
     ASSERT_EQ(2, a.insert(2, 3));
-    ASSERT_EQ(1,a.uniquify());
+    ASSERT_EQ(1, a.uniquify());
     a.traverse(print);
+}
+
+TEST_F(VectorTest, Search) {
+    int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Vector<int> a(l, 10);
+    ASSERT_EQ(8, a.search(9, 0, 9));
+    ASSERT_EQ(8, binSearch(l, 9, 0, 9));
 }

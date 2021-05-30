@@ -14,9 +14,8 @@ using Rank = int;          //秩
 #include <vector>
 #include <iostream>
 
-template <typename T>
-class Vector
-{ //向量模板类
+template<typename T>
+class Vector { //向量模板类
 protected:
     Rank _size;
     int _capacity;
@@ -27,6 +26,8 @@ protected:
     void expand(); //空间不足时扩容
     // O(1)-O(1) - share delete space
     void shrink(); //装填因子过小时压缩
+    // O(log(n))-O(1) - binarySearch
+    Rank binSearch(const T &e, Rank lo, Rank hi) const;
     //    bool bubble ( Rank lo, Rank hi ); //扫描交换
     //    void bubbleSort ( Rank lo, Rank hi ); //起泡排序算法
     //    Rank maxItem ( Rank lo, Rank hi ); //选取最大元素
@@ -42,8 +43,7 @@ public:
     explicit Vector(int c = DEFAULT_CAPACITY, int s = 0, T v = 0) //容量为c、规模为s、所有元素初始为v
     {
         _elem = new T[_capacity = c];
-        for (_size = 0; _size < s; _elem[_size++] = v)
-            ;
+        for (_size = 0; _size < s; _elem[_size++] = v);
     } //s<=c NOLINT(bugprone-suspicious-semicolon)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
@@ -69,6 +69,7 @@ public:
     bool empty() const { return !_size; } //判空
     // O(n)-O(1)
     int disordered() const;
+
     // O(n)-O(1)
     // return : -1--error
     Rank find(T const &e) const { return find(e, 0, _size); } //无序向量整体查找
@@ -76,10 +77,11 @@ public:
     // return : -1--error
     Rank find(T const &e, Rank lo, Rank hi) const; //无序向量区间查找
 
-    //    Rank search ( T const& e ) const //有序向量整体查找
-    //    { return ( 0 >= _size ) ? -1 : search ( e, 0, _size ); }
-    //    Rank search ( T const& e, Rank lo, Rank hi ) const; //有序向量区间查找
-    //    // 可写访问接口
+//    Rank search(T const &e) const //有序向量整体查找
+//    { return (0 >= _size) ? -1 : search(e, 0, _size); }
+
+    Rank search(T const &e, Rank lo, Rank hi) const; //有序向量区间查找
+    // 可写访问接口
     T &operator[](Rank r); //重载下标操作符，可以类似于数组形式引用各元素
 
     //    const T& operator[] ( Rank r ) const; //仅限于做右值的重载版本
@@ -112,22 +114,20 @@ public:
     // O(n)-O(1)
     void traverse(void (*)(T &)); //遍历（使用函数指针，只读或局部性修改）
     // O(n)-O(1)
-    template <typename VST>
+    template<typename VST>
     void traverse(VST &); //遍历（使用函数对象，可全局性修改）
 };
 
-template <typename T>
-void Vector<T>::copyFrom(const T *A, Rank lo, Rank hi)
-{
+template<typename T>
+void Vector<T>::copyFrom(const T *A, Rank lo, Rank hi) {
     _elem = new T[_capacity = 2 * (hi - lo)];
     _size = 0;
     while (lo < hi)
         _elem[_size++] = A[lo++];
 }
 
-template <typename T>
-Vector<T> &Vector<T>::operator=(Vector<T> const &v)
-{
+template<typename T>
+Vector<T> &Vector<T>::operator=(Vector<T> const &v) {
     if (&v == this)
         return *this;
     if (_elem)
@@ -136,81 +136,70 @@ Vector<T> &Vector<T>::operator=(Vector<T> const &v)
     return *this;
 }
 
-template <typename T>
-void Vector<T>::expand()
-{
+template<typename T>
+void Vector<T>::expand() {
     if (_size < _capacity)
         return;
     if (_capacity < DEFAULT_CAPACITY)
         _capacity = DEFAULT_CAPACITY;
     T *oleElem = _elem;
     _elem = new T[_capacity <<= 1];
-    for (int i = 0; i < _size; ++i)
-    {
+    for (int i = 0; i < _size; ++i) {
         _elem[i] = oleElem[i];
     }
     delete[] oleElem;
 }
 
-template <typename T>
-void Vector<T>::shrink()
-{
+template<typename T>
+void Vector<T>::shrink() {
     if (_capacity < DEFAULT_CAPACITY << 1)
         return;
     if (_size << 2 > _capacity)
         return;
     T *oleElem = _elem;
     _elem = new T[_capacity >>= 1];
-    for (int i = 0; i < _size; ++i)
-    {
+    for (int i = 0; i < _size; ++i) {
         _elem[i] = oleElem[i];
     }
     delete[] oleElem;
 }
 
-template <typename T>
-void Vector<T>::test()
-{
+template<typename T>
+void Vector<T>::test() {
     this->_size = 3;
     this->expand();
     this->_size = 1;
     this->shrink();
 }
 
-template <typename T>
-T &Vector<T>::operator[](Rank r)
-{
+template<typename T>
+T &Vector<T>::operator[](Rank r) {
     return _elem[r];
 }
 
-template <typename T>
-void Vector<T>::print()
-{
+template<typename T>
+void Vector<T>::print() {
     for (int i = 0; i < _size; ++i)
         std::cout << _elem[i] << '\t';
     std::cout << '\n';
 }
 
-template <typename T>
-void Vector<T>::unsort(Rank lo, Rank hi)
-{
-    srand((unsigned int)time(nullptr)); // NOLINT(cert-msc51-cpp)
+template<typename T>
+void Vector<T>::unsort(Rank lo, Rank hi) {
+    srand((unsigned int) time(nullptr)); // NOLINT(cert-msc51-cpp)
     T *V = _elem + lo;
     for (Rank i = hi - lo; i > 0; i--)
         swap(V[i - 1], V[rand() % i]); // NOLINT(cert-msc50-cpp)
 }
 
-template <typename T>
-Rank Vector<T>::find(const T &e, Rank lo, Rank hi) const
-{
-    while ((lo < hi--) && (_elem[hi] != e))
-        ;
+template<typename T>
+Rank Vector<T>::find(const T &e, Rank lo, Rank hi) const {
+    while ((lo < hi--) && (_elem[hi] != e));
     return hi;
 }
 
-template <typename T>
-Rank Vector<T>::insert(Rank r, const T &e)
-{
+template<typename T>
+Rank Vector<T>::insert(Rank r, const T &e) {
     expand();
     for (int i = _size; i > r; i--)
         _elem[i] = _elem[i - 1];
@@ -219,44 +208,37 @@ Rank Vector<T>::insert(Rank r, const T &e)
     return r;
 }
 
-template <typename T>
-T Vector<T>::remove(Rank r)
-{
+template<typename T>
+T Vector<T>::remove(Rank r) {
     T re = _elem[r];
     remove(r, r + 1);
     return re;
 }
 
-template <typename T>
-int Vector<T>::remove(Rank lo, Rank hi)
-{
+template<typename T>
+int Vector<T>::remove(Rank lo, Rank hi) {
     if (lo >= hi)
         return 0;
-    for (; hi < _size; _elem[lo++] = _elem[hi++])
-        ;
+    for (; hi < _size; _elem[lo++] = _elem[hi++]);
     _size = lo;
     shrink();
     return hi - lo;
 }
 
-template <typename T>
-int Vector<T>::deduplicate()
-{
+template<typename T>
+int Vector<T>::deduplicate() {
     int oldSize = _size;
     int i = 1;
-    while (i < _size)
-    {
+    while (i < _size) {
         (find(_elem[i], 0, i) < 0) ? i++ : remove(i);
     }
     return oldSize - _size;
 }
 
-template <typename T>
-int Vector<T>::uniquify()
-{
+template<typename T>
+int Vector<T>::uniquify() {
     int i = 1, j = 0;
-    for (; i < _size; i++)
-    {
+    for (; i < _size; i++) {
         if (_elem[i] != _elem[j])
             _elem[++j] = _elem[i];
     }
@@ -272,24 +254,21 @@ int Vector<T>::uniquify()
 // }
 // return oldSize - _size;
 
-template <typename T>
-void Vector<T>::traverse(void (*visitor)(T &))
-{
+template<typename T>
+void Vector<T>::traverse(void (*visitor)(T &)) {
     for (int i = 0; i < _size; ++i)
         visitor(_elem[i]);
 }
 
-template <typename T>
-template <typename VST>
-void Vector<T>::traverse(VST &visitor)
-{
+template<typename T>
+template<typename VST>
+void Vector<T>::traverse(VST &visitor) {
     for (int i = 0; i < _size; ++i)
         visitor(_elem[i]);
 }
 
-template <typename T>
-int Vector<T>::disordered() const
-{
+template<typename T>
+int Vector<T>::disordered() const {
     int n = 0;
     for (int i = 1; i < _size; ++i)
         if (_elem[i - 1] > _elem[i])
@@ -297,20 +276,48 @@ int Vector<T>::disordered() const
     return n;
 }
 
+template<typename T>
+Rank Vector<T>::search(const T &e, Rank lo, Rank hi) const {
+    return binSearch(e, lo, hi);
+}
+
+
+template<typename T>
+Rank Vector<T>::binSearch(const T &e, Rank lo, Rank hi) const {
+    while (lo <= hi) {
+        Rank mid = (lo + hi) >> 1;
+        if (e < _elem[mid]) hi = mid;
+        else if (_elem[mid] < e) lo = mid + 1;
+        else return mid;
+    }
+    return -1;
+}
+
 //Vector
 
 // tool function
 
-template <typename T>
+template<typename T>
 static bool lt(T *a, T *b) { return lt(*a, *b); }
 
-template <typename T>
+template<typename T>
 static bool lt(T &a, T &b) { return a < b; }
 
-template <typename T>
+template<typename T>
 static bool eq(T *a, T *b) { return eq(*a, *b); }
 
-template <typename T>
+template<typename T>
 static bool eq(T &a, T &b) { return a == b; }
+
+template<typename T>
+static Rank binSearch(T *A, T const &e, Rank lo, Rank hi) {
+    while (lo < hi) {
+        Rank mi = (lo + hi) >> 1;
+        if (e < A[mi]) hi = mi;
+        else if (A[mi] < e) lo = mi + 1;
+        else return mi;
+    }
+    return -1;
+}
 
 #endif //START_VECTOR_H
