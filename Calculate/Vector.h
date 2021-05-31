@@ -27,8 +27,7 @@ protected:
     void expand(); //空间不足时扩容
     // O(1)-O(1) - share delete space
     void shrink(); //装填因子过小时压缩
-    // O(log(n))-O(1) - binarySearch
-    Rank binSearch(const T &e, Rank lo, Rank hi) const;
+
     //    bool bubble ( Rank lo, Rank hi ); //扫描交换
     //    void bubbleSort ( Rank lo, Rank hi ); //起泡排序算法
     //    Rank maxItem ( Rank lo, Rank hi ); //选取最大元素
@@ -106,6 +105,10 @@ public:
     void unsort(Rank lo, Rank hi); //对[lo, hi)置乱
     // O(n)-O(1)
     void unsort() { unsort(0, _size); } //整体置乱
+    // O(log(n))-O(1)-O(1.5log(n)) - binarySearch
+    Rank binSearch(const T &e, Rank lo, Rank hi) const;
+    // O(log(n))-O(1)-O(1.44log(n)) - fibSearch
+    Rank fibSearch(const T &e, Rank lo, Rank hi) const;
     // O(n*n)-O(1)
     int deduplicate(); //无序去重
     // O(n*n)-O(1)
@@ -290,6 +293,23 @@ Rank Vector<T>::binSearch(const T &e, Rank lo, Rank hi) const {
         if (e < _elem[mid]) hi = mid;
         else if (_elem[mid] < e) lo = mid + 1;
         else return mid;
+    }
+    return -1;
+}
+
+template<typename T>
+Rank Vector<T>::fibSearch(const T &e, Rank lo, Rank hi) const {
+    Fib fib(hi - lo);
+    while (lo < hi) {
+        Rank mi = lo + fib.get();
+        if (_elem[mi] < e) {
+            lo =  mi + 1;
+        } else if (e < _elem[mi]) {
+            hi = mi;
+        } else{
+            return mi;
+        }
+        fib.prev();
     }
     return -1;
 }

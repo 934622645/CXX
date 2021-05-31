@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <Vector.h>
+#include <numeric>
 
 class VectorTest : public testing::Test {
 };
@@ -55,13 +56,17 @@ TEST_F(VectorTest, CRUD) {
 }
 
 TEST_F(VectorTest, Search) {
-    int l[10]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    Vector<int> a(l, 10);
+
+    vector<int> ll(1000);
+    iota(ll.begin(), ll.end(), 1);
+    Vector<int> a(ll.data(),1000);
     ASSERT_EQ(8, a.search(9, 0, 9));
-    ASSERT_EQ(8, binSearch(l, 9, 0, 9));
+    ASSERT_EQ(8, binSearch(ll.data(), 9, 0, 9));
+    ASSERT_EQ(8, binSearch(ll.data(), 9, 0, 9));
+    ASSERT_EQ(3, a.fibSearch( 4, 0, 9));
 }
 
-
+// fibonacci test
 TEST_F(VectorTest, Fibonacci) {
     Fib fib(5);
     ASSERT_EQ(5,fib.next());
