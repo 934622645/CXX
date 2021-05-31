@@ -60,3 +60,12 @@ TEST_F(VectorTest, Search) {
     ASSERT_EQ(8, a.search(9, 0, 9));
     ASSERT_EQ(8, binSearch(l, 9, 0, 9));
 }
+
+
+TEST_F(VectorTest, Fibonacci) {
+    Fib fib(5);
+    ASSERT_EQ(5,fib.next());
+    ASSERT_EQ(8,fib.next());
+    ASSERT_EQ(5,fib.prev());
+    ASSERT_EQ(3,fib.prev());
+}

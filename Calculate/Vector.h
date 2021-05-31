@@ -13,6 +13,7 @@ using Rank = int;          //秩
 
 #include <vector>
 #include <iostream>
+#include "until.h"
 
 template<typename T>
 class Vector { //向量模板类
