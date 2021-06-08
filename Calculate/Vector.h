@@ -107,8 +107,12 @@ public:
     void unsort() { unsort(0, _size); } //整体置乱
     // O(log(n))-O(1)-O(1.5log(n)) - binarySearch
     Rank binSearch(const T &e, Rank lo, Rank hi) const;
+    // O(log(n))-O(1)-O(log(n)) - binarySearch1
+    Rank binSearch1(const T &e, Rank lo, Rank hi) const;
+
     // O(log(n))-O(1)-O(1.44log(n)) - fibSearch
     Rank fibSearch(const T &e, Rank lo, Rank hi) const;
+
     // O(n*n)-O(1)
     int deduplicate(); //无序去重
     // O(n*n)-O(1)
@@ -298,15 +302,29 @@ Rank Vector<T>::binSearch(const T &e, Rank lo, Rank hi) const {
 }
 
 template<typename T>
+Rank Vector<T>::binSearch1(const T &e, Rank lo, Rank hi) const {
+    while ( lo < hi) {
+        Rank mid = (lo + hi) >> 1;
+        if (_elem[mid] < e) {
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+    return _elem[lo] == e ? lo : -1;
+}
+
+
+template<typename T>
 Rank Vector<T>::fibSearch(const T &e, Rank lo, Rank hi) const {
     Fib fib(hi - lo);
     while (lo < hi) {
         Rank mi = lo + fib.get();
         if (_elem[mi] < e) {
-            lo =  mi + 1;
+            lo = mi + 1;
         } else if (e < _elem[mi]) {
             hi = mi;
-        } else{
+        } else {
             return mi;
         }
         fib.prev();

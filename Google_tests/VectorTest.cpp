@@ -59,18 +59,21 @@ TEST_F(VectorTest, Search) {
 
     vector<int> ll(1000);
     iota(ll.begin(), ll.end(), 1);
-    Vector<int> a(ll.data(),1000);
+    Vector<int> a(ll.data(), 1000);
     ASSERT_EQ(8, a.search(9, 0, 9));
     ASSERT_EQ(8, binSearch(ll.data(), 9, 0, 9));
-    ASSERT_EQ(8, binSearch(ll.data(), 9, 0, 9));
-    ASSERT_EQ(3, a.fibSearch( 4, 0, 9));
+    ASSERT_EQ(3, a.fibSearch(4, 0, 9));
+    ASSERT_EQ(3, a.binSearch1(4, 0, 9));
+    ASSERT_EQ(0, a.binSearch1(1, 0, 9));
+    ASSERT_EQ(-1, a.binSearch1(-1, 0, 9));
+
 }
 
 // fibonacci test
 TEST_F(VectorTest, Fibonacci) {
     Fib fib(5);
-    ASSERT_EQ(5,fib.next());
-    ASSERT_EQ(8,fib.next());
-    ASSERT_EQ(5,fib.prev());
-    ASSERT_EQ(3,fib.prev());
+    ASSERT_EQ(5, fib.next());
+    ASSERT_EQ(8, fib.next());
+    ASSERT_EQ(5, fib.prev());
+    ASSERT_EQ(3, fib.prev());
 }
