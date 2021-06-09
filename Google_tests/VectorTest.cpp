@@ -69,6 +69,20 @@ TEST_F(VectorTest, Search) {
 
 }
 
+
+TEST_F(VectorTest, Sort) {
+    vector<int> ll(1000);
+    iota(ll.begin(), ll.end(), 1);
+    Vector<int> a(ll.data(), 1000);
+    a.unsort();
+    Rank len = a.size() - 1;
+    a.bubbleSort(0, len);
+    for (int i = 0; i < 100; ++i) {
+        ASSERT_EQ(i, a.binSearch1(i+1, 0, len));
+    }
+
+}
+
 // fibonacci test
 TEST_F(VectorTest, Fibonacci) {
     Fib fib(5);

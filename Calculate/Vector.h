@@ -28,8 +28,11 @@ protected:
     // O(1)-O(1) - share delete space
     void shrink(); //装填因子过小时压缩
 
-    //    bool bubble ( Rank lo, Rank hi ); //扫描交换
-    //    void bubbleSort ( Rank lo, Rank hi ); //起泡排序算法
+public:
+    // O(n)-O(1)
+    bool bubble(Rank lo, Rank hi); //扫描交换
+    // O(n*n)-O(1)-O(n/2)
+    void bubbleSort(Rank lo, Rank hi); //起泡排序算法
     //    Rank maxItem ( Rank lo, Rank hi ); //选取最大元素
     //    void selectionSort ( Rank lo, Rank hi ); //选择排序算法
     //    void merge ( Rank lo, Rank mi, Rank hi ); //归并算法
@@ -38,8 +41,7 @@ protected:
     //    Rank partition ( Rank lo, Rank hi ); //轴点构造算法
     //    void quickSort ( Rank lo, Rank hi ); //快速排序算法
     //    void shellSort ( Rank lo, Rank hi ); //希尔排序算法
-public:
-    // O(n)-O(n) 构造函数
+
     explicit Vector(int c = DEFAULT_CAPACITY, int s = 0, T v = 0) //容量为c、规模为s、所有元素初始为v
     {
         _elem = new T[_capacity = c];
@@ -99,7 +101,7 @@ public:
     // O(n)-O(1)
     Rank insert(T const &e) { return insert(_size, e); } //默认作为末元素插入
 
-    //    void sort ( Rank lo, Rank hi ); //对[lo, hi)排序
+    //    void sort(Rank lo, Rank hi); //对[lo, hi)排序
     //    void sort() { sort ( 0, _size ); } //整体排序
     // O(n)-O(1)
     void unsort(Rank lo, Rank hi); //对[lo, hi)置乱
@@ -107,6 +109,7 @@ public:
     void unsort() { unsort(0, _size); } //整体置乱
     // O(log(n))-O(1)-O(1.5log(n)) - binarySearch
     Rank binSearch(const T &e, Rank lo, Rank hi) const;
+
     // O(log(n))-O(1)-O(log(n)) - binarySearch1
     Rank binSearch1(const T &e, Rank lo, Rank hi) const;
 
@@ -303,7 +306,7 @@ Rank Vector<T>::binSearch(const T &e, Rank lo, Rank hi) const {
 
 template<typename T>
 Rank Vector<T>::binSearch1(const T &e, Rank lo, Rank hi) const {
-    while ( lo < hi) {
+    while (lo < hi) {
         Rank mid = (lo + hi) >> 1;
         if (_elem[mid] < e) {
             lo = mid + 1;
@@ -330,6 +333,23 @@ Rank Vector<T>::fibSearch(const T &e, Rank lo, Rank hi) const {
         fib.prev();
     }
     return -1;
+}
+
+template<typename T>
+bool Vector<T>::bubble(Rank lo, Rank hi) {
+    bool status = true;
+    for (; lo < hi; lo++) {
+        if (_elem[lo] > _elem[lo + 1]) {
+            swap(_elem[lo], _elem[lo + 1]);
+            status = false;
+        }
+    }
+    return status;
+}
+
+template<typename T>
+void Vector<T>::bubbleSort(Rank lo, Rank hi) {
+    while (!bubble(lo, hi--));
 }
 
 //Vector
