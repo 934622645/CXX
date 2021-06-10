@@ -13,6 +13,7 @@ using Rank = int;          //秩
 
 #include <vector>
 #include <iostream>
+#include <new>
 #include "until.h"
 
 template<typename T>
@@ -35,8 +36,10 @@ public:
     void bubbleSort(Rank lo, Rank hi); //起泡排序算法
     //    Rank maxItem ( Rank lo, Rank hi ); //选取最大元素
     //    void selectionSort ( Rank lo, Rank hi ); //选择排序算法
-    //    void merge ( Rank lo, Rank mi, Rank hi ); //归并算法
-    //    void mergeSort ( Rank lo, Rank hi ); //归并排序算法
+    // O(n)-O(n)
+    void merge(Rank lo, Rank mi, Rank hi); //归并算法
+    // O(n*log(n))-O(n)
+    void mergeSort(Rank lo, Rank hi); //归并排序算法
     //    void heapSort ( Rank lo, Rank hi ); //堆排序（稍后结合完全堆讲解）
     //    Rank partition ( Rank lo, Rank hi ); //轴点构造算法
     //    void quickSort ( Rank lo, Rank hi ); //快速排序算法
@@ -350,6 +353,31 @@ bool Vector<T>::bubble(Rank lo, Rank hi) {
 template<typename T>
 void Vector<T>::bubbleSort(Rank lo, Rank hi) {
     while (!bubble(lo, hi--));
+}
+
+template<typename T>
+void Vector<T>::mergeSort(Rank lo, Rank hi) {
+    if (hi - lo < 2)
+        return;
+    Rank mi = (lo + hi) / 2;
+    mergeSort(lo, mi);
+    mergeSort(mi, hi);
+    merge(lo, mi, hi);
+}
+
+template<typename T>
+void Vector<T>::merge(Rank lo, Rank mi, Rank hi) {
+    T *A = _elem + lo;
+    int lb = mi - lo;
+    T *B = new T[lb];
+    for (Rank i = 0; i < lb; B[i] = A[i], i++);
+    int lc = hi - mi;
+    T *C = _elem + mi;
+    for (int a = 0, b = 0, c = 0; (b < lb) || (c < lc);) {
+        if ((b < lb) && (c >= lc || B[b] <= C[c])) A[a++] = B[b++];
+        if ((c < lc) && (b >= lb || B[b] > C[c])) A[a++] = C[c++];
+    }
+    delete[] B;
 }
 
 //Vector

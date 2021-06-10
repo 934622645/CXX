@@ -80,7 +80,11 @@ TEST_F(VectorTest, Sort) {
     for (int i = 0; i < 100; ++i) {
         ASSERT_EQ(i, a.binSearch1(i+1, 0, len));
     }
-
+    a.unsort();
+    a.mergeSort(0, len);
+    for (int i = 0; i < 100; ++i) {
+        ASSERT_EQ(i, a.binSearch1(i+1, 0, len));
+    }
 }
 
 // fibonacci test
