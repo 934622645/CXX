@@ -12,9 +12,9 @@ template<typename T>
 class List { //列表模板类
     using ListNodePosi = ListNode<T> *;
 private:
-    int _size;
-    ListNodePosi header;
-    ListNodePosi trailer; //规模、头哨兵、尾哨兵
+    int _size; // 规模
+    ListNodePosi header; // 头哨兵
+    ListNodePosi trailer; //尾哨兵
 
 protected:
     void init(); //列表创建时的初始化
@@ -37,24 +37,25 @@ public:
 //    // 只读访问接口
 //    Rank size() const { return _size; } //规模
 //    bool empty() const { return _size <= 0; } //判空
-//    T& operator[] ( Rank r ) const; //重载，支持循秩访问（效率低）
-//    ListNodePosi first() const { return header->succ; } //首节点位置
-//    ListNodePosi last() const { return trailer->pred; } //末节点位置
+    T &operator[](Rank r) const; //重载，支持循秩访问（效率低）
+    ListNodePosi first() const { return header->succ; } //首节点位置
+    ListNodePosi last() const { return trailer->pred; } //末节点位置
 //    bool valid ( ListNodePosi p ) //判断位置p是否对外合法
 //    { return p && ( trailer != p ) && ( header != p ); } //将头、尾节点等同于NULL
-//    ListNodePosi find ( T const& e ) const //无序列表查找
-//    { return find ( e, _size, trailer ); }
-//    ListNodePosi find ( T const& e, int n, ListNodePosi p ) const; //无序区间查找
+    ListNodePosi find(T const &e) const //无序列表查找
+    { return find(e, _size, trailer); }
+    // O(n)-O(1)
+    ListNodePosi find(T const &e, int n, ListNodePosi p) const; //无序区间查找
 //    ListNodePosi search ( T const& e ) const //有序列表查找
 //    { return search ( e, _size, trailer ); }
 //    ListNodePosi search ( T const& e, int n, ListNodePosi p ) const; //有序区间查找
 //    ListNodePosi selectMax ( ListNodePosi p, int n ); //在p及其n-1个后继中选出最大者
 //    ListNodePosi selectMax() { return selectMax ( header->succ, _size ); } //整体最大者
 //    // 可写访问接口
-//    ListNodePosi insertAsFirst ( T const& e ); //将e当作首节点插入
-//    ListNodePosi insertAsLast ( T const& e ); //将e当作末节点插入
-//    ListNodePosi insert ( ListNodePosi p, T const& e ); //将e当作p的后继插入
-//    ListNodePosi insert ( T const& e, ListNodePosi p ); //将e当作p的前驱插入
+    ListNodePosi insertAsFirst ( T const& e ); //将e当作首节点插入
+    ListNodePosi insertAsLast ( T const& e ); //将e当作末节点插入
+    ListNodePosi insert ( ListNodePosi p, T const& e ); //将e当作p的后继插入
+    ListNodePosi insert ( T const& e, ListNodePosi p ); //将e当作p的前驱插入
 //    T remove ( ListNodePosi p ); //删除合法位置p处的节点,返回被删除节点
 //    void merge ( List<T> & L ) { merge ( header->succ, _size, L, L.header->succ, L._size ); } //全列表归并
 //    void sort ( ListNodePosi p, int n ); //列表区间排序
@@ -78,6 +79,44 @@ void List<T>::init() {
     trailer->succ = nullptr;
     _size = 0;
 }
+
+template<typename T>
+T &List<T>::operator[](Rank r) const {
+    ListNodePosi tp = first();
+    while (r-- > 0) tp = tp->succ;
+    return tp->data;
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::find(const T &e, int n, List::ListNodePosi p) const {
+    while (n-- > 0)if ((p = p->pred)->data == e)return p;
+    return nullptr;
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::insertAsFirst(const T &e) {
+    _size++;
+    return header->insertAsSucc(e);
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::insertAsLast(const T &e) {
+    _size++;
+    return trailer->insertAsPred(e);
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::insert(List::ListNodePosi p, const T &e) {
+    _size++;
+    return p->insertAsSucc(e);
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::insert(const T &e, List::ListNodePosi p) {
+    _size++;
+    return p->insertAsPred(e);
+}
+
 //List
 
 
