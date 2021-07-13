@@ -47,7 +47,7 @@ public:
 //    bool empty() const { return _size <= 0; } //判空
 
     // O(n)-O(1)
-    ListNodePosi &operator[](Rank r) const; //重载，支持循秩访问（效率低）
+    ListNodePosi operator[](Rank r) const; //重载，支持循秩访问（效率低）
     // O(1)-O(1)
     ListNodePosi first() const { return header->succ; } //首节点位置
     // O(1)-O(1)
@@ -75,7 +75,7 @@ public:
     ListNodePosi insert(ListNodePosi p, T const &e); //将e当作p的后继插入
     // O(1)-O(1)
     ListNodePosi insert(T const &e, ListNodePosi p); //将e当作p的前驱插入
-//    T remove ( ListNodePosi p ); //删除合法位置p处的节点,返回被删除节点
+    T remove ( ListNodePosi p ); //删除合法位置p处的节点,返回被删除节点
 //    void merge ( List<T> & L ) { merge ( header->succ, _size, L, L.header->succ, L._size ); } //全列表归并
 //    void sort ( ListNodePosi p, int n ); //列表区间排序
 //    void sort() { sort ( first(), _size ); } //列表整体排序
@@ -100,7 +100,7 @@ void List<T>::init() {
 }
 
 template<typename T>
-typename List<T>::ListNodePosi &List<T>::operator[](Rank r) const {
+typename List<T>::ListNodePosi List<T>::operator[](Rank r) const {
     ListNodePosi tp = first();
     while (r-- > 0) tp = tp->succ;
     return tp;
@@ -147,12 +147,21 @@ int List<T>::copyNodes(List::ListNodePosi p, int n) {
 
 template<typename T>
 List<T>::List(const List<T> &L, Rank r, int n) {
-    this->copyNodes(L[r ], n);
+    this->copyNodes(L[r], n);
 }
 
 template<typename T>
 List<T>::List(List::ListNodePosi p, int n) {
     this->copyNodes(p, n);
+}
+
+template<typename T>
+T List<T>::remove(List::ListNodePosi p) {
+    T e = p->data;
+    p->pred->succ = p->succ;
+    p->succ->pred = p->pred;
+    delete p;
+    return e;
 }
 
 //List
