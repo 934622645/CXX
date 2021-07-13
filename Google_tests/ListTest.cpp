@@ -7,10 +7,11 @@
 
 #include <gtest/gtest.h>
 #include "List.h"
+
 class ListTest : public testing::Test {
 };
 
-TEST_F(ListTest , base) {
+TEST_F(ListTest, base) {
     List<int> list;
     list.insertAsFirst(10);
     list.insertAsLast(11);
@@ -25,3 +26,14 @@ TEST_F(ListTest , base) {
     ASSERT_EQ(11, list1.find(11)->data);
 }
 
+TEST_F(ListTest, test) {
+    List<int> list;
+    list.insertAsFirst(10);
+    list.insertAsLast(10);
+    list.traverse(&printT<int>);
+    list.deduplicate();
+    list.insertAsLast(10);
+    list.uniquify();
+    ASSERT_EQ(1, list.getSize());
+
+}

@@ -9,6 +9,7 @@
 
 
 #include "ListNode.h" //引入列表节点类
+#include <iostream>
 
 template<typename T>
 class List { //列表模板类
@@ -21,7 +22,7 @@ private:
 
 protected:
     void init(); //列表创建时的初始化
-//    int clear(); //清除所有节点
+    int clear(); //清除所有节点
 
     int copyNodes(ListNodePosi, int); //复制列表中自位置p起的n项
 //    ListNodePosi merge ( ListNodePosi, int, List<T> &, ListNodePosi, int ); //归并
@@ -31,6 +32,10 @@ protected:
 //    void radixSort(ListNodePosi, int); //对从p开始连续的n个节点基数排序
 
 public:
+    int getSize() const {
+        return _size;
+    }
+
     // 构造函数
     List() { init(); } //默认 NOLINT(cppcoreguidelines-pro-type-member-init)
     // O(n)-O(n)
@@ -41,7 +46,7 @@ public:
     List(const List<T> &L, Rank r, int n); //复制列表L中自第r项起的n项
     List(ListNodePosi p, int n); //复制列表中自位置p起的n项
 //    // 析构函数
-//    ~List(); //释放（包含头、尾哨兵在内的）所有节点
+    ~List(); //释放（包含头、尾哨兵在内的）所有节点
 //    // 只读访问接口
 //    Rank size() const { return _size; } //规模
 //    bool empty() const { return _size <= 0; } //判空
@@ -54,6 +59,7 @@ public:
     ListNodePosi last() const { return trailer->pred; } //末节点位置
 //    bool valid ( ListNodePosi p ) //判断位置p是否对外合法
 //    { return p && ( trailer != p ) && ( header != p ); } //将头、尾节点等同于NULL
+
     // O(n)-O(1)
     ListNodePosi find(T const &e) const //无序列表查找
     { return find(e, _size, trailer); }
@@ -75,17 +81,22 @@ public:
     ListNodePosi insert(ListNodePosi p, T const &e); //将e当作p的后继插入
     // O(1)-O(1)
     ListNodePosi insert(T const &e, ListNodePosi p); //将e当作p的前驱插入
-    T remove ( ListNodePosi p ); //删除合法位置p处的节点,返回被删除节点
+    T remove(ListNodePosi p); //删除合法位置p处的节点,返回被删除节点
 //    void merge ( List<T> & L ) { merge ( header->succ, _size, L, L.header->succ, L._size ); } //全列表归并
 //    void sort ( ListNodePosi p, int n ); //列表区间排序
 //    void sort() { sort ( first(), _size ); } //列表整体排序
-//    int deduplicate(); //无序去重
-//    int uniquify(); //有序去重
+
+    // O(n*n)-O(1)
+    int deduplicate(); //无序去重
+    // O(n)-O(1)
+    int uniquify(); //有序去重
 //    void reverse(); //前后倒置（习题）
-//    // 遍历
-//    void traverse ( void (* ) ( T& ) ); //遍历，依次实施visit操作（函数指针，只读或局部性修改）
-//    template <typename VST> //操作器
-//    void traverse ( VST& ); //遍历，依次实施visit操作（函数对象，可全局性修改）
+
+    // O(n)-O(1)
+    void traverse(void (* )(T &)); //遍历，依次实施visit操作（函数指针，只读或局部性修改）
+    // O(n)-O(1)
+    template<typename VST>
+    void traverse(VST &); //遍历，依次实施visit操作（函数对象，可全局性修改）
 };
 
 template<typename T>
@@ -161,10 +172,74 @@ T List<T>::remove(List::ListNodePosi p) {
     p->pred->succ = p->succ;
     p->succ->pred = p->pred;
     delete p;
+    _size--;
     return e;
 }
 
+template<typename T>
+List<T>::~List() {
+    clear();
+    delete header;
+    delete trailer;
+}
+
+template<typename T>
+int List<T>::clear() {
+    int oldSize = _size;
+    while (_size > 0)remove(header->succ);
+    return oldSize;
+}
+
+template<typename T>
+int List<T>::deduplicate() {
+    if (_size <= 0) return 0;
+    int oldSize = _size;
+    ListNodePosi p = header;
+    int r = 0;
+    while (trailer != (p = p->succ)) {
+        ListNodePosi q = find(p->data, r, p);
+        q ? remove(q) : r++;
+    }
+    return oldSize - _size;
+}
+
+template<typename T>
+template<typename VST>
+void List<T>::traverse(VST &visit) {
+    for (ListNodePosi p = header->succ; p != trailer; p = p->succ) {
+        visit(p->data);
+    }
+}
+
+template<typename T>
+void List<T>::traverse(void (*visit)(T &)) {
+    for (ListNodePosi p = header->succ; p != trailer; p = p->succ) {
+        visit(p->data);
+    }
+}
+
+template<typename T>
+int List<T>::uniquify() {
+    if (_size <= 0) {
+        return 0;
+    }
+    int oldSize = _size;
+    ListNodePosi p = header;
+    for (; trailer != p->succ;) {
+        if (p->data == p->succ->data)remove(p->succ);
+        else p = p->succ;
+    }
+    return oldSize - _size;
+}
+
+
 //List
+
+// tools function
+template<typename T>
+void printT(T &data) {
+    std::cout << data << std::endl;
+}
 
 
 #endif //START_LIST_H
