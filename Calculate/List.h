@@ -26,9 +26,10 @@ protected:
 
     int copyNodes(ListNodePosi, int); //复制列表中自位置p起的n项
 //    ListNodePosi merge ( ListNodePosi, int, List<T> &, ListNodePosi, int ); //归并
-//    void mergeSort ( ListNodePosi &, int ); //对从p开始连续的n个节点归并排序
-//    void selectionSort ( ListNodePosi, int ); //对从p开始连续的n个节点选择排序
-//    void insertionSort ( ListNodePosi, int ); //对从p开始连续的n个节点插入排序
+    void mergeSort(ListNodePosi &, int); //对从p开始连续的n个节点归并排序
+    void selectionSort(ListNodePosi, int); //对从p开始连续的n个节点选择排序
+    // O(n*n)-O(1)
+    void insertionSort(ListNodePosi, int); //对从p开始连续的n个节点插入排序
 //    void radixSort(ListNodePosi, int); //对从p开始连续的n个节点基数排序
 
 public:
@@ -45,11 +46,12 @@ public:
 
     List(const List<T> &L, Rank r, int n); //复制列表L中自第r项起的n项
     List(ListNodePosi p, int n); //复制列表中自位置p起的n项
-//    // 析构函数
+    // 析构函数
     ~List(); //释放（包含头、尾哨兵在内的）所有节点
-//    // 只读访问接口
-//    Rank size() const { return _size; } //规模
-//    bool empty() const { return _size <= 0; } //判空
+    // 只读访问接口
+
+    Rank size() const { return _size; } //规模
+    bool empty() const { return _size <= 0; } //判空
 
     // O(n)-O(1)
     ListNodePosi operator[](Rank r) const; //重载，支持循秩访问（效率低）
@@ -66,9 +68,12 @@ public:
 
     // O(n)-O(1)
     ListNodePosi find(T const &e, int n, ListNodePosi p) const; //无序区间查找
-//    ListNodePosi search ( T const& e ) const //有序列表查找
-//    { return search ( e, _size, trailer ); }
-//    ListNodePosi search ( T const& e, int n, ListNodePosi p ) const; //有序区间查找
+    // O(n)-O(1)
+    ListNodePosi search(T const &e) const //有序列表查找
+    { return search(e, _size, trailer); }
+
+    // O(n)-O(1)
+    ListNodePosi search(T const &e, int n, ListNodePosi p) const; //有序区间查找
 //    ListNodePosi selectMax ( ListNodePosi p, int n ); //在p及其n-1个后继中选出最大者
 //    ListNodePosi selectMax() { return selectMax ( header->succ, _size ); } //整体最大者
 //    // 可写访问接口
@@ -83,8 +88,9 @@ public:
     ListNodePosi insert(T const &e, ListNodePosi p); //将e当作p的前驱插入
     T remove(ListNodePosi p); //删除合法位置p处的节点,返回被删除节点
 //    void merge ( List<T> & L ) { merge ( header->succ, _size, L, L.header->succ, L._size ); } //全列表归并
-//    void sort ( ListNodePosi p, int n ); //列表区间排序
-//    void sort() { sort ( first(), _size ); } //列表整体排序
+
+    void sort(ListNodePosi p, int n); //列表区间排序
+    void sort() { sort(first(), _size); } //列表整体排序
 
     // O(n*n)-O(1)
     int deduplicate(); //无序去重
@@ -230,6 +236,49 @@ int List<T>::uniquify() {
         else p = p->succ;
     }
     return oldSize - _size;
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::search(const T &e, int n, List::ListNodePosi p) const {
+    // assert: 0<=n<=rank(p)<_size
+    while (0 <= n--) {
+        if ((p = p->pred)->data <= e) {
+            break;
+        }
+    }
+    return p;
+}
+
+template<typename T>
+void List<T>::sort(List::ListNodePosi p, int n) {
+    switch (1) {
+        case 1:
+            insertionSort(p, n);
+            break;
+        case 2:
+            selectionSort(p, n);
+        default:
+            mergeSort(p, n);
+    }
+}
+
+template<typename T>
+void List<T>::insertionSort(List::ListNodePosi p, int n) {
+    for (int r = 0; r < n; ++r) {
+        insert(search(p->data, r, p), p->data);
+        p = p->succ;
+        remove(p->pred);
+    }
+}
+
+template<typename T>
+void List<T>::selectionSort(List::ListNodePosi, int) {
+
+}
+
+template<typename T>
+void List<T>::mergeSort(List::ListNodePosi &, int) {
+
 }
 
 

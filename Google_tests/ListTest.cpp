@@ -35,5 +35,22 @@ TEST_F(ListTest, test) {
     list.insertAsLast(10);
     list.uniquify();
     ASSERT_EQ(1, list.getSize());
+}
+
+TEST_F(ListTest, search) {
+    List<int> list;
+    list.insertAsFirst(10);
+    list.insertAsLast(11);
+    ASSERT_EQ(11, list.search(11)->data);
+}
+
+TEST_F(ListTest, insertionSort) {
+    List<int> list;
+    list.insertAsFirst(11);
+    list.insertAsLast(10);
+    list.insertAsLast(8);
+    list.insertAsLast(9);
+    list.sort();
+    ASSERT_EQ(11, list[list.size() - 1]->data);
 
 }
