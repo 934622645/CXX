@@ -1,4 +1,9 @@
 #pragma clang diagnostic push
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "UnreachableCode"
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 //
 // Created by haoge on 2021/6/16.
@@ -27,7 +32,8 @@ protected:
     int copyNodes(ListNodePosi, int); //复制列表中自位置p起的n项
 //    ListNodePosi merge ( ListNodePosi, int, List<T> &, ListNodePosi, int ); //归并
     void mergeSort(ListNodePosi &, int); //对从p开始连续的n个节点归并排序
-    void selectionSort(ListNodePosi, int); //对从p开始连续的n个节点选择排序
+    // O(n*n)-O(1)
+
     // O(n*n)-O(1)
     void insertionSort(ListNodePosi, int); //对从p开始连续的n个节点插入排序
 //    void radixSort(ListNodePosi, int); //对从p开始连续的n个节点基数排序
@@ -92,6 +98,8 @@ public:
     void sort(ListNodePosi p, int n); //列表区间排序
     void sort() { sort(first(), _size); } //列表整体排序
 
+    void selectionSort(ListNodePosi, int); //对从p开始连续的n个节点选择排序
+
     // O(n*n)-O(1)
     int deduplicate(); //无序去重
     // O(n)-O(1)
@@ -103,6 +111,8 @@ public:
     // O(n)-O(1)
     template<typename VST>
     void traverse(VST &); //遍历，依次实施visit操作（函数对象，可全局性修改）
+    // O(n)-O(1)
+    ListNodePosi selectMax(ListNodePosi p, int n);// 查找最大值
 };
 
 template<typename T>
@@ -272,13 +282,29 @@ void List<T>::insertionSort(List::ListNodePosi p, int n) {
 }
 
 template<typename T>
-void List<T>::selectionSort(List::ListNodePosi, int) {
-
+void List<T>::selectionSort(List::ListNodePosi p, int n) {
+    ListNodePosi tail = trailer->pred;
+    while (n > 1) {
+        ListNodePosi max = selectMax(header->succ, n);
+        insert(tail, remove(max));
+        tail = tail->pred;
+        n--;
+    }
 }
+
 
 template<typename T>
 void List<T>::mergeSort(List::ListNodePosi &, int) {
 
+}
+
+template<typename T>
+typename List<T>::ListNodePosi List<T>::selectMax(List::ListNodePosi p, int n) {
+    ListNodePosi max = p;
+    for (ListNodePosi cur = p; 1 < n; n--) {
+        if ((cur = cur->succ)->data > max->data) max = cur;
+    }
+    return max;
 }
 
 
@@ -294,3 +320,5 @@ void printT(T &data) {
 #endif //START_LIST_H
 
 //#pragma clang diagnostic pop
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop

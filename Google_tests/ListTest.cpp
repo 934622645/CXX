@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include "List.h"
+#include "Vector.h"
 
 class ListTest : public testing::Test {
 };
@@ -51,6 +52,17 @@ TEST_F(ListTest, insertionSort) {
     list.insertAsLast(8);
     list.insertAsLast(9);
     list.sort();
+    ASSERT_EQ(11, list[list.size() - 1]->data);
+
+}
+
+TEST_F(ListTest, selectionSort) {
+    List<int> list;
+    list.insertAsFirst(11);
+    list.insertAsLast(10);
+    list.insertAsLast(8);
+    list.insertAsLast(9);
+    list.selectionSort(list.first(), list.size());
     ASSERT_EQ(11, list[list.size() - 1]->data);
 
 }
