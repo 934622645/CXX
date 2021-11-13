@@ -170,6 +170,7 @@ int List<T>::copyNodes(List::ListNodePosi p, int n) {
         insertAsFirst(p->data);
         p = p->succ;
     }
+    return 0;
 }
 
 template<typename T>

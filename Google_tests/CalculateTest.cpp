@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <Start.h>
 
-class CalculateTest : public testing::Test {
+class CalculateTest : public ::testing::Test {
 };
 
 TEST_F(CalculateTest, reverse) {
@@ -76,6 +76,6 @@ TEST_F(CalculateTest, fibonacci) {
     int64_t p = 0;
     EXPECT_EQ( Start::fib_re_li(1000,p),Start::fib_it(1000));
     time_t end_time = time(nullptr);
-    printf("Fibonacci time speed %lld\n", end_time - start_time);
+    printf("Fibonacci time speed %ld\n", end_time - start_time);
     EXPECT_EQ(8, Start::fib_re(6));
 }
