@@ -10,7 +10,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(test CalculateTest.cpp VectorTest.cpp ListTest.cpp)
+aux_source_directory(. DIR_TEST_SRCS)
+
+add_executable(test ${DIR_TEST_SRCS})
 target_link_libraries(test gtest_main)
 target_link_libraries(test Calculate)
 
